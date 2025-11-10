@@ -1,19 +1,17 @@
 /**
  * @requires team_name_mapper.js - Provides normalizeTeamName() function
- * @requires csv_parser.js - Provides parseCSVFromDrive() function
+ * @requires csv_parser.js - Provides parseCSVFromGitHub() function
  */
 
 /**
  * Main function to update team pool standings
  *
- * @param {string} csvFileName - Optional CSV file name (default: "player_teams.csv")
- * @param {string} folderId - Optional Google Drive folder ID
+ * @param {string} githubPath - Optional GitHub path to CSV file (default: "data/player_teams.csv")
  */
-function updateTeamPoolStandings(csvFileName, folderId) {
-(csvFileName, folderId) {
+function updateTeamPoolStandings(githubPath) {
 
-  // Default CSV file name
-  csvFileName = csvFileName || "player_teams.csv";
+  // Default GitHub path to CSV file
+  githubPath = githubPath || "data/player_teams.csv";
 
   var response = UrlFetchApp.fetch("https://api-web.nhle.com/v1/standings/now");
 
@@ -52,9 +50,9 @@ function updateTeamPoolStandings(csvFileName, folderId) {
   Logger.log(output);
   targetSheet.getRange(1, 1, output.length, output[0].length).setValues(output);
 
-  // Read player-team mappings from CSV
-  Logger.log("Reading player-team mappings from CSV: " + csvFileName);
-  var csvData = parseCSVFromDrive(csvFileName, folderId);
+  // Read player-team mappings directly from GitHub
+  Logger.log("Reading player-team mappings from GitHub: " + githubPath);
+  var csvData = parseCSVFromGitHub(githubPath);
 
   if (!csvData || csvData.length === 0) {
     throw new Error("CSV file is empty or could not be parsed");

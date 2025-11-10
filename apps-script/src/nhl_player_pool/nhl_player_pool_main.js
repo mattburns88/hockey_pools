@@ -12,24 +12,23 @@
 /**
  * Main function to update player pool standings
  * Fetches current player goals from NHL API and calculates pool standings
- * Reads player-skater mappings from player_skaters.csv in Google Drive
+ * Reads player-skater mappings from player_skaters.csv directly from GitHub
  *
- * @param {string} csvFileName - Optional CSV file name (default: "player_skaters.csv")
- * @param {string} folderId - Optional Google Drive folder ID
+ * @param {string} githubPath - Optional GitHub path to CSV file (default: "data/player_skaters.csv")
  */
-function updatePlayerPoolStandings(csvFileName, folderId) {
+function updatePlayerPoolStandings(githubPath) {
   try {
     Logger.log("=== Starting Player Pool Update ===");
 
-    // Default CSV file name
-    csvFileName = csvFileName || "player_skaters.csv";
+    // Default GitHub path to CSV file
+    githubPath = githubPath || "data/player_skaters.csv";
 
     // Get the active spreadsheet
     var sheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1BsWA-8507bOYGFQjHci_uru2TpU6pcaZdgjnBgdfFyQ/edit");
 
-    // Step 1: Parse CSV file from Google Drive
-    Logger.log("Reading player-skater mappings from CSV: " + csvFileName);
-    var csvData = parseCSVFromDrive(csvFileName, folderId);
+    // Step 1: Parse CSV file directly from GitHub
+    Logger.log("Reading player-skater mappings from GitHub: " + githubPath);
+    var csvData = parseCSVFromGitHub(githubPath);
 
     if (!csvData || csvData.length === 0) {
       throw new Error("CSV file is empty or could not be parsed");

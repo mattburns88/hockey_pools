@@ -99,6 +99,44 @@ function parseCSVFromURL(url) {
 }
 
 /**
+ * Parse CSV directly from GitHub repository
+ *
+ * @param {string} githubPath - Path to CSV file in the GitHub repo (e.g., "data/player_skaters.csv")
+ * @param {string} owner - GitHub repository owner (default: "mattburns88")
+ * @param {string} repo - GitHub repository name (default: "hockey_pools")
+ * @param {string} branch - Git branch name (default: "main")
+ * @returns {Array<Array<string>>} 2D array of CSV data
+ */
+function parseCSVFromGitHub(githubPath, owner, repo, branch) {
+  try {
+    // Set defaults
+    owner = owner || "mattburns88";
+    repo = repo || "hockey_pools";
+    branch = branch || "main";
+
+    // Build GitHub raw content URL
+    var githubUrl = "https://raw.githubusercontent.com/" +
+                    owner + "/" +
+                    repo + "/" +
+                    branch + "/" +
+                    githubPath;
+
+    Logger.log("Fetching CSV from GitHub: " + githubUrl);
+
+    var response = UrlFetchApp.fetch(githubUrl);
+    var csvContent = response.getContentText();
+    var csvData = parseCSVContent(csvContent);
+
+    Logger.log("Parsed " + csvData.length + " rows from GitHub");
+    return csvData;
+
+  } catch (error) {
+    Logger.log("ERROR parsing CSV from GitHub: " + error.toString());
+    throw error;
+  }
+}
+
+/**
  * Test function to verify CSV parsing
  */
 function testCSVParsing() {
