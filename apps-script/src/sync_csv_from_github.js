@@ -10,7 +10,7 @@
  */
 var GITHUB_CONFIG = {
   // Your GitHub repository details
-  owner: "mattb",  // Your GitHub username
+  owner: "mattburns88",  // Your GitHub username
   repo: "hockey_pools",
   branch: "main",
 

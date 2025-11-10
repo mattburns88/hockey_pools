@@ -152,7 +152,7 @@ function calculatePlayerPoolStandings(sheet, playerGoalsMap, csvData) {
     }
     poolStandings.unshift(headers);
 
-    // Get or create Player Pool Standings sheet
+    // Get or create player_pool_standings sheet
     var poolStandingsSheet = sheet.getSheetByName("Player Pool Standings");
 
     if (!poolStandingsSheet) {

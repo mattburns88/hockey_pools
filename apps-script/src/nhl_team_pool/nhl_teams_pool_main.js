@@ -9,7 +9,8 @@
  * @param {string} csvFileName - Optional CSV file name (default: "player_teams.csv")
  * @param {string} folderId - Optional Google Drive folder ID
  */
-function nhl_api_v2(csvFileName, folderId) {
+function updateTeamPoolStandings(csvFileName, folderId) {
+(csvFileName, folderId) {
 
   // Default CSV file name
   csvFileName = csvFileName || "player_teams.csv";
@@ -23,7 +24,12 @@ function nhl_api_v2(csvFileName, folderId) {
   Logger.log(data);
 
   var sheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1BsWA-8507bOYGFQjHci_uru2TpU6pcaZdgjnBgdfFyQ/edit");
-  var targetSheet = sheet.getSheetByName("NHL_API_Standings");
+  var targetSheet = sheet.getSheetByName("team_api_standings");
+
+  // Create the sheet if it doesn't exist
+  if (!targetSheet) {
+    targetSheet = sheet.insertSheet("team_api_standings");
+  }
 
   var output = [];
 
@@ -192,12 +198,12 @@ function calculatePoolStandings(sheet, teamPointsMap, csvData) {
   }
   poolStandings.unshift(headers);
   
-  // Write to Pool Standings sheet
-  var poolStandingsSheet = sheet.getSheetByName("Pool Standings");
-  
+  // Write to team_pool_standings sheet
+  var poolStandingsSheet = sheet.getSheetByName("Team Pool Standings");
+
   // Create the sheet if it doesn't exist
   if (!poolStandingsSheet) {
-    poolStandingsSheet = sheet.insertSheet("Pool Standings");
+    poolStandingsSheet = sheet.insertSheet("Team Pool Standings");
   }
   
   // Clear existing content
@@ -246,5 +252,5 @@ function calculatePoolStandings(sheet, teamPointsMap, csvData) {
   // Freeze header row
   poolStandingsSheet.setFrozenRows(1);
 
-  Logger.log("Pool Standings updated successfully!");
+  Logger.log("Team Pool Standings updated successfully!");
 }
