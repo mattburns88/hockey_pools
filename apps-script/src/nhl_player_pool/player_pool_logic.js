@@ -98,18 +98,18 @@ function calculatePlayerPoolStandings(sheet, playerGoalsMap, csvData) {
         return b.goals - a.goals;
       });
 
-      // Calculate total of top 4 skaters
-      var top4Total = 0;
+      // Calculate total of top 5 skaters
+      var top5Total = 0;
 
-      for (var k = 0; k < Math.min(4, playerSkaters.length); k++) {
-        top4Total += playerSkaters[k].goals;
+      for (var k = 0; k < Math.min(5, playerSkaters.length); k++) {
+        top5Total += playerSkaters[k].goals;
       }
 
       // Create output row
-      // Format: Player Name | Top 4 Total | Skater 1 | Skater 2 | Skater 3 | ...
+      // Format: Player Name | Top 5 Total | Skater 1 | Skater 2 | Skater 3 | ...
       var outputRow = [
         playerName,
-        top4Total
+        top5Total
       ];
 
       // Add all skaters with their goals in separate columns
@@ -120,9 +120,9 @@ function calculatePlayerPoolStandings(sheet, playerGoalsMap, csvData) {
       poolStandings.push(outputRow);
     }
 
-    // Sort pool standings by top 4 total (descending)
+    // Sort pool standings by top 5 total (descending)
     poolStandings.sort(function(a, b) {
-      return b[1] - a[1]; // Sort by column index 1 (Top 4 Total)
+      return b[1] - a[1]; // Sort by column index 1 (Top 5 Total)
     });
 
     // Determine the maximum number of skaters any player has for header columns
@@ -146,13 +146,13 @@ function calculatePlayerPoolStandings(sheet, playerGoalsMap, csvData) {
     });
 
     // Build dynamic headers
-    var headers = ["Player", "Top 4 Total"];
+    var headers = ["Player", "Top 5 Goals"];
     for (var i = 1; i <= maxSkaters; i++) {
       headers.push("Skater " + i);
     }
     poolStandings.unshift(headers);
 
-    // Get or create player_pool_standings sheet
+    // Get or create Player Pool Standings sheet
     var poolStandingsSheet = sheet.getSheetByName("Player Pool Standings");
 
     if (!poolStandingsSheet) {
@@ -209,22 +209,22 @@ function formatPlayerPoolStandingsSheet(sheet, numRows) {
   headerRange.setBackground("#4285F4");
   headerRange.setFontColor("#FFFFFF");
 
-  // Format Top 4 Total column as numbers
+  // Format Top 5 Goals column as numbers
   if (numRows > 1) {
     var totalRange = sheet.getRange(2, 2, numRows - 1, 1);
     totalRange.setNumberFormat("#,##0");
     totalRange.setHorizontalAlignment("right");
   }
 
-  // Highlight top 4 skaters for each player with light green
+  // Highlight top 5 skaters for each player with light green
   // Skater columns start at column 3 (column C)
   if (numRows > 1 && numCols > 2) {
     for (var row = 2; row <= numRows; row++) {
-      // Highlight the first 4 skater columns (columns 3, 4, 5, 6) with light green
-      var top4Count = Math.min(4, numCols - 2); // Don't exceed available columns
-      if (top4Count > 0) {
-        var top4Range = sheet.getRange(row, 3, 1, top4Count);
-        top4Range.setBackground("#d9ead3"); // Light green
+      // Highlight the first 5 skater columns (columns 3, 4, 5, 6, 7) with light green
+      var top5Count = Math.min(5, numCols - 2); // Don't exceed available columns
+      if (top5Count > 0) {
+        var top5Range = sheet.getRange(row, 3, 1, top5Count);
+        top5Range.setBackground("#d9ead3"); // Light green
       }
     }
   }
