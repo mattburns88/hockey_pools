@@ -1,0 +1,13 @@
+# clasp ignore file
+# Files and directories to exclude from clasp push
+
+# Don't push these
+node_modules/
+.git/
+.github/
+databricks/
+docs/
+
+# BUT DO push data files
+!data/
+!data/**

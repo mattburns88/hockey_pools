@@ -1,0 +1,39 @@
+# hockey_pools
+# Databricks Implementation
+
+Coming soon - Python-based implementation using Databricks for NHL Hockey Pool.
+
+## Planned Features
+
+- **Data Pipeline:** Automated daily fetching of NHL standings
+- **Historical Data:** Store all standings in Delta Lake
+- **Advanced Analytics:** Track trends, predictions, season-over-season comparisons
+- **Databricks App:** Web interface for pool management and visualization
+- **API Integration:** RESTful API for external access
+
+## Architecture
+
+```
+NHL API → Databricks Job → Delta Lake → Databricks App
+                                ↓
+                          Analytics & ML
+```
+
+## Development Plan
+
+1. **Phase 1:** Basic data ingestion pipeline
+2. **Phase 2:** Historical data storage and queries
+3. **Phase 3:** Pool calculation logic
+4. **Phase 4:** Databricks App UI
+5. **Phase 5:** Advanced features (ML predictions, etc.)
+
+## Prerequisites
+
+- Databricks workspace
+- Python 3.9+
+- Delta Lake
+- (Additional requirements TBD)
+
+## Setup
+
+(Instructions coming soon)
