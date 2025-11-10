@@ -10,7 +10,6 @@
  * @param {string} folderId - Optional Google Drive folder ID
  */
 function updateTeamPoolStandings(csvFileName, folderId) {
-(csvFileName, folderId) {
 
   // Default CSV file name
   csvFileName = csvFileName || "player_teams.csv";
