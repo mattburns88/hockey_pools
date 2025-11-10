@@ -1,20 +1,19 @@
 /**
  * @requires team_name_mapper.js - Provides normalizeTeamName() function
- * @requires csv_parser.js - Provides parseCSVFromDrive() function
+ * @requires csv_parser.js - Provides parseCSVFromGitHub() function
  */
 
 /**
  * Main function to update team pool standings
  *
- * @param {string} csvFileName - Optional CSV file name (default: "player_teams.csv")
- * @param {string} folderId - Optional Google Drive folder ID
+ * @param {string} githubPath - Optional GitHub path to CSV file (default: "data/player_teams.csv")
  */
-function updateTeamPoolStandings(csvFileName, folderId) {
-  try {
-    Logger.log("=== Starting Team Pool Update ===");
 
-    // Default CSV file name
-    csvFileName = csvFileName || "player_teams.csv";
+function updateTeamPoolStandings(githubPath) {
+
+  // Default GitHub path to CSV file
+  githubPath = githubPath || "data/player_teams.csv";
+
 
     // Get the spreadsheet
     var sheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1BsWA-8507bOYGFQjHci_uru2TpU6pcaZdgjnBgdfFyQ/edit");
@@ -53,7 +52,10 @@ function updateTeamPoolStandings(csvFileName, folderId) {
     // Step 3: Calculate pool standings using CSV data
     calculatePoolStandings(sheet, teamPointsMap, csvData);
 
-    Logger.log("=== Team Pool Update Complete ===");
+
+  // Read player-team mappings directly from GitHub
+  Logger.log("Reading player-team mappings from GitHub: " + githubPath);
+  var csvData = parseCSVFromGitHub(githubPath);
 
   } catch (error) {
     Logger.log("ERROR in updateTeamPoolStandings: " + error.toString());
