@@ -10,59 +10,55 @@
  * @param {string} folderId - Optional Google Drive folder ID
  */
 function updateTeamPoolStandings(csvFileName, folderId) {
+  try {
+    Logger.log("=== Starting Team Pool Update ===");
 
-  // Default CSV file name
-  csvFileName = csvFileName || "player_teams.csv";
+    // Default CSV file name
+    csvFileName = csvFileName || "player_teams.csv";
 
-  var response = UrlFetchApp.fetch("https://api-web.nhle.com/v1/standings/now");
+    // Get the spreadsheet
+    var sheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1BsWA-8507bOYGFQjHci_uru2TpU6pcaZdgjnBgdfFyQ/edit");
 
-  // Parse the JSON reply
-  var json = response.getContentText();
-  var data = JSON.parse(json);
+    // Step 1: Fetch NHL standings from API
+    Logger.log("Fetching NHL standings from API...");
+    var response = UrlFetchApp.fetch("https://api-web.nhle.com/v1/standings/now");
 
-  Logger.log(data);
+    // Parse the JSON reply
+    var json = response.getContentText();
+    var data = JSON.parse(json);
 
-  var sheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1BsWA-8507bOYGFQjHci_uru2TpU6pcaZdgjnBgdfFyQ/edit");
-  var targetSheet = sheet.getSheetByName("team_api_standings");
+    // Create a map of team names to points for easy lookup
+    var teamPointsMap = {};
 
-  // Create the sheet if it doesn't exist
-  if (!targetSheet) {
-    targetSheet = sheet.insertSheet("team_api_standings");
+    data.standings.forEach(function(record) {
+      var teamName = record.teamName.default;
+      var teamPoints = record.points;
+
+      // Store team points in map for lookup
+      teamPointsMap[teamName] = teamPoints;
+    });
+
+    Logger.log("Retrieved standings for " + Object.keys(teamPointsMap).length + " teams");
+
+    // Step 2: Read player-team mappings from CSV
+    Logger.log("Reading player-team mappings from CSV: " + csvFileName);
+    var csvData = parseCSVFromDrive(csvFileName, folderId);
+
+    if (!csvData || csvData.length === 0) {
+      throw new Error("CSV file is empty or could not be parsed");
+    }
+
+    Logger.log("Loaded " + csvData.length + " rows from CSV");
+
+    // Step 3: Calculate pool standings using CSV data
+    calculatePoolStandings(sheet, teamPointsMap, csvData);
+
+    Logger.log("=== Team Pool Update Complete ===");
+
+  } catch (error) {
+    Logger.log("ERROR in updateTeamPoolStandings: " + error.toString());
+    throw error;
   }
-
-  var output = [];
-
-  // Create a map of team names to points for easy lookup
-  var teamPointsMap = {};
-
-  data.standings.forEach(function(record, i) {
-    Logger.log(record);
-    var conferenceName = record.conferenceName;
-    var divisionName = record.divisionName;
-    var teamName = record.teamName.default;
-    var teamPoints = record.points;
-
-    output.push([conferenceName, divisionName, teamName, teamPoints]);
-
-    // Store team points in map for lookup
-    teamPointsMap[teamName] = teamPoints;
-  });
-
-  Logger.log(output);
-  targetSheet.getRange(1, 1, output.length, output[0].length).setValues(output);
-
-  // Read player-team mappings from CSV
-  Logger.log("Reading player-team mappings from CSV: " + csvFileName);
-  var csvData = parseCSVFromDrive(csvFileName, folderId);
-
-  if (!csvData || csvData.length === 0) {
-    throw new Error("CSV file is empty or could not be parsed");
-  }
-
-  Logger.log("Loaded " + csvData.length + " rows from CSV");
-
-  // Now process the pool standings with CSV data
-  calculatePoolStandings(sheet, teamPointsMap, csvData);
 }
 
 function calculatePoolStandings(sheet, teamPointsMap, csvData) {
@@ -197,7 +193,7 @@ function calculatePoolStandings(sheet, teamPointsMap, csvData) {
   }
   poolStandings.unshift(headers);
   
-  // Write to team_pool_standings sheet
+  // Write to Team Pool Standings sheet
   var poolStandingsSheet = sheet.getSheetByName("Team Pool Standings");
 
   // Create the sheet if it doesn't exist

@@ -13,12 +13,12 @@
  * @returns {Object} Map of player names to goal counts
  */
 function fetchPlayerGoals(limit) {
-  limit = limit || 100;
+  limit = limit || 600;
 
   try {
     Logger.log("Fetching top " + limit + " goal scorers from NHL API...");
 
-    var url = "https://api-web.nhle.com/v1/skater-stats-leaders/20242025/2?categories=goals&limit=" + limit;
+    var url = "https://api-web.nhle.com/v1/skater-stats-leaders/current?categories=goals&limit=" + limit;
     var response = UrlFetchApp.fetch(url);
     var json = response.getContentText();
     var data = JSON.parse(json);
@@ -60,7 +60,7 @@ function fetchPlayerGoals(limit) {
  */
 function getGoalsForPlayers(playerNames) {
   // Fetch top 150 scorers (should cover most fantasy pool players)
-  var allPlayerGoals = fetchPlayerGoals(150);
+  var allPlayerGoals = fetchPlayerGoals(600);
 
   var playerGoalsMap = {};
   var notFound = [];
@@ -73,7 +73,7 @@ function getGoalsForPlayers(playerNames) {
       Logger.log("Found: " + playerName + " => " + normalized + " (" + allPlayerGoals[normalized] + " goals)");
     } else {
       notFound.push(playerName);
-      Logger.log("WARNING: Player '" + playerName + "' (normalized: '" + normalized + "') not found in top 150 scorers");
+      Logger.log("WARNING: Player '" + playerName + "' (normalized: '" + normalized + "') not found in top 600 scorers");
       // Default to 0 goals if not in top scorers
       if (normalized) {
         playerGoalsMap[normalized] = 0;
