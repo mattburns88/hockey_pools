@@ -20,6 +20,11 @@ function updatePlayerPoolStandings(githubPath) {
   try {
     Logger.log("=== Starting Player Pool Update ===");
 
+    // Handle event object from triggers/menus - ignore if it's an object
+    if (typeof githubPath === 'object') {
+      githubPath = null;
+    }
+
     // Default GitHub path to CSV file
     githubPath = githubPath || "data/player_skaters.csv";
 
